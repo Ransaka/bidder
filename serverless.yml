@@ -1,5 +1,5 @@
 service:
-  name: udemy_course
+  name: udemy-course
 
 plugins:
   - serverless-bundle
@@ -10,11 +10,28 @@ provider:
   runtime: nodejs12.x
   memorySize: 256
   stage: ${opt:stage, 'dev'}
-  
+  region: eu-west-1
+  environment:
+    AUCTIONS_TABLE_NAME: ${self:custom.AuctionTable.name}
+  iamRoleStatements:
+    - ${file(iam/AuctionsTableIAM.yaml):AuctionsTableIAM}
+
+resources:
+  Resources:
+    AuctionsTable: ${file(resources/AuctionsTable.yaml):AuctionsTable}
+
+
 functions:
-  hello:
-    handler: src/handlers/hello.handler
+  createAuction:
+    handler: src/handlers/createAuction.handler
     events:
       - http:
-          method: GET
-          path: /hello
+          method: POST
+          path: /auction
+
+
+custom:
+  AuctionTable:
+    name: !Ref AuctionsTable
+    arn: !GetAtt AuctionsTable.Arn
+
