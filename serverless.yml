@@ -20,7 +20,6 @@ resources:
   Resources:
     AuctionsTable: ${file(resources/AuctionsTable.yaml):AuctionsTable}
 
-
 functions:
   createAuction:
     handler: src/handlers/createAuction.handler
@@ -28,10 +27,14 @@ functions:
       - http:
           method: POST
           path: /auction
-
+  getAuctions:
+    handler: src/handlers/getAuctions.handler
+    events:
+      - http:
+          method: GET
+          path: /auctions
 
 custom:
   AuctionTable:
     name: !Ref AuctionsTable
     arn: !GetAtt AuctionsTable.Arn
-
